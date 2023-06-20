@@ -1,20 +1,22 @@
-FROM quay.io/toolbx-images/alpine-toolbox:edge
+FROM docker.io/library/archlinux:base-devel
 
 LABEL com.github.containers.toolbox="true" \
       usage="This image is meant to be used with the toolbox or distrobox command" \
-      summary="A cloud-native terminal experience" \
-      maintainer="jorge.castro@gmail.com"
+      summary="My personalized image for a user space container" \
+      maintainer="severi.jaaskelainen@gmail.com"
 
-COPY extra-packages /
-RUN apk update && \
-    apk upgrade && \
-    grep -v '^#' /extra-packages | xargs apk add
-RUN rm /extra-packages
+COPY packages /
+RUN pacman -Syu --needed --noconfirm - < packages
+RUN rm /packages
 
-RUN   ln -fs /bin/sh /usr/bin/sh && \
-      ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/docker && \
+# Clean up cache
+RUN pacman -Scc --noconfirm
+
+# Enable sudo permission for wheel users
+RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/toolbox
+
+RUN   ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/docker && \
       ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/flatpak && \ 
       ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/podman && \
       ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/rpm-ostree && \
       ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/transactional-update
-     
