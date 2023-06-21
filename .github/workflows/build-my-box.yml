@@ -1,4 +1,4 @@
-name: build-boxkit
+name: build-my-box
 on:
   pull_request:
     branches:
@@ -11,7 +11,7 @@ on:
     paths-ignore:
       - '**/README.md'
 env:
-    IMAGE_NAME: boxkit
+    IMAGE_NAME: my-box
     IMAGE_TAGS: latest
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
@@ -38,7 +38,7 @@ jobs:
           images: |
             ${{ env.IMAGE_NAME }}
           labels: |
-            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/boxkit/main/README.md
+            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/severij/my-box/main/README.md
 
       # Build image using Buildah action
       - name: Build Image
